@@ -1,3 +1,6 @@
+import { Db } from "../routes/Db.js";
+
+const collectionName="Product"
 
 export default class Product{
     constructor(id,name,price,rating,description,quantity,creatorId,userRatingCount,userRatingMapping){
@@ -11,8 +14,11 @@ export default class Product{
        this.userRatingCount=userRatingCount;
        this.userRatingMapping=userRatingMapping;
     }
-    static getAllProduct(filters) {
-        const filteredProduct=products.filter((entry)=>{
+    static async getAllProduct(filters) { 
+        const collection= await Db().collection(collectionName);
+        const {minPrice,maxPrice}=filters;
+        const Products=await collection.find({}).toArray();
+        const filteredProduct=Products.filter((entry)=>{
             return (
                 ( 
                     (!filters.minPrice || entry.price >= parseInt(filters.minPrice)) && 
@@ -22,18 +28,23 @@ export default class Product{
         })
         return filteredProduct;
     }
-    static addProduct(id,name,price,description,quantity){
+    static async addProduct(id,name,price,description,quantity){
+        const collection= await Db().collection(collectionName);
        const newProduct=new Product(id,name,price,0,description,quantity,911,0);
-       products.push(newProduct);
+       await collection.insertOne(newProduct);
+    //    products.push(newProduct);
     }
-    static getProductById(id){
-        const filteredProduct=products.find((entry)=>{
-            return entry.id == id;
-        })
+    static async getProductById(id){
+        const collection= await Db().collection(collectionName);
+        const filteredProduct=await collection.findOne({id:id});
+        // const filteredProduct=products.find((entry)=>{
+        //     return entry.id == id;
+        // })
+        // console.log(filteredProduct)
         return filteredProduct;
     }
-    static addProductRating(productId,userId,rating){
-        const selectedProduct=Product.getProductById(productId);
+    static async addProductRating(productId,userId,rating){
+        const selectedProduct=await Product.getProductById(productId);
         if(!selectedProduct){
             return "Product with this id is not present";
         }
@@ -50,9 +61,9 @@ export default class Product{
     }
 }
 
-let products=[
-    new Product("1",'laptop',120000,4.9,"this is the premium laptop for heavy use",1,9117446593,0,{}),
-    new Product("2", 'mobile',53000,4.9,"this is the premium mobile for heavy use",1,911744659,0,{}),
-    new Product("3", 'machine',15000,4.9,"this is the premium machine for heavy use",1,91174465,0,{}),
-    new Product("4", 'dekstop',10000,4.9,"this is the premium dekstop for heavy use",1,9117446,0,{}),
-]
+// let products=[
+//     new Product("1",'laptop',120000,4.9,"this is the premium laptop for heavy use",1,9117446593,0,{}),
+//     new Product("2", 'mobile',53000,4.9,"this is the premium mobile for heavy use",1,911744659,0,{}),
+//     new Product("3", 'machine',15000,4.9,"this is the premium machine for heavy use",1,91174465,0,{}),
+//     new Product("4", 'dekstop',10000,4.9,"this is the premium dekstop for heavy use",1,9117446,0,{}),
+// ]

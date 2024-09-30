@@ -5,7 +5,7 @@ import User from "../models/user.model.js"
 const SECRET_KEY="this is secret key";
 const roleEnums = ['customer', 'seller', 'logistics']
 //sign up for new user
-function signup(req,res){
+async function  signup(req,res){
     const {name,email,password,role}=req.body;
     const userId=uuidv4();
     if(!name || !email || !password || !role){
@@ -19,7 +19,7 @@ function signup(req,res){
         return res.status(400).json({status: false, message: 'could not register user', error: 'role is not correct'})
     }
     const hashedPassword=bcrypt.hashSync(password,10);
-    User.creatUser(name,email,hashedPassword,userId,role);
+    await User.creatUser(name,email,hashedPassword,userId,role);
     return res.status(200).json({
         status:true,
         message:"User signed up successfully"
@@ -44,7 +44,7 @@ async function signin(req,res){
    }
 
    const hashedPassword=user.password;
-   console.log(user.password)
+//    console.log(user.password)
    const isValidated=await bcrypt.compare(password,hashedPassword);
    if(!isValidated){
     return res.status(400).json({
@@ -67,12 +67,12 @@ async function signin(req,res){
    });
 }
 //return all user who signed up
-function getAllUser(req,res){
-    const user=User.getAllUser();
+async function  getAllUsers(req,res){
+    const user=await User.getAllUser();
     return res.status(200).json({
-        status:true,
+        "success":true,
         users:user
     });
 }
 
-export{signup,signin,getAllUser};
+export{signup,signin,getAllUsers};

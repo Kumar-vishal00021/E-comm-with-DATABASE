@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-
+import {Db} from "../routes/Db.js";
+const collectionName="User";
 export default class User{
     constructor(name,email,password,userId,role){
         this.userId=userId;
@@ -8,26 +9,27 @@ export default class User{
         this.password=password;
         this.role=role;
     }
-    static creatUser(name,email,password,userId,role){
+    static async creatUser(name,email,password,userId,role){
+        const userCollection= await Db().collection(collectionName);
         const user=new User(name,email,password,userId,role);
-        users.push(user);
+        await userCollection.insertOne(user);
     }
-    static getAllUser(){
+    static async getAllUser(){
+       const userCollection= await Db().collection(collectionName);
+       const users=await userCollection.find({}).toArray();
+    //    console.log(users)
        return users;
     }
     
-    static getUserByemail(email){
-       const user= users.find((entry)=>{
-            return entry.email == email;
-        })
-        return user;
+    static async getUserByemail(email){
+       const userCollection= await Db().collection(collectionName);
+       const user= userCollection.findOne({email:email});
+       return user;
     }
-    static getUserById(id){
+    static async getUserById(id){
+        const userCollection= await Db().collection(collectionName);
+       const user= userCollection.findOne({_id:id});
+       return user;
+    }
 
-        const user = users.find((entry)=>{
-            return entry.userId == id
-        })
-        return user;
-    }
 }
-let users=[]

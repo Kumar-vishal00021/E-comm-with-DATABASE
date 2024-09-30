@@ -1,6 +1,6 @@
 import express from "express";
 import {addProduct,getAllProduct,getProductById, rateProduct} from "../controllers/product.controller.js";
-import { getAllUser, signin, signup } from "../controllers/user.controler.js";
+import { getAllUsers, signin, signup } from "../controllers/user.controler.js";
 import { auth, customerCheck } from "../middlewares/auth.js";
 import { placeOrder } from "../controllers/order.controler.js";
 import { addToCartController, getCartByUser, removeFromCartController } from "../controllers/cart.controller.js";
@@ -24,7 +24,7 @@ router.route("/user/signin")
   .get(signin);
 //return all user who alredy signed up
 router.route("/user")
-  .get(getAllUser);
+  .get(getAllUsers);
 
 
 router.route('/order/:productId')

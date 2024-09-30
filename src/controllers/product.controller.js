@@ -35,14 +35,15 @@ function addProduct(req,res){
    });
 }
 //return all products
-function getAllProduct(req,res){
+async function  getAllProduct(req,res){
    const filters=req.query;
    let allProducs=[];
    logger(req.query);
    winstonLogger.info('first timer!! go easy');
    winstonLogger.error('rjrjogjewofe');
   try{
-    allProducs=Product.getAllProduct(filters);
+    allProducs=await Product.getAllProduct(filters);
+    console.log(allProducs)
   }
   catch(err){
      return res.status(500).json({
@@ -51,24 +52,24 @@ function getAllProduct(req,res){
       message:"Something Went Wrong!"
    });
   }
-   return res.status(200).json({
-      status:true,
+   return (res.status(200).json({
+      "status":true,
       product:allProducs
-   });
+   }));
 }
 //return one product by specific id
-function getProductById(req,res){
+async function getProductById(req,res){
    const productId=req.params.productId;
    if(!productId) return res.status(400).json({
       status:false,
       error:"Id is missing!"
    });
    try{
-     const newProduct=Product.getProductById(productId);
-     return res.status(200).json({
+     const newProduct= await Product.getProductById(productId);
+     return( res.status(200).json({
       status:true,
       product:newProduct
-   })
+   }))
    }
    catch(err){
       return res.status(500).json({
@@ -81,7 +82,7 @@ function getProductById(req,res){
 
 async function rateProduct(req, res) {
    const userId = req?.user?.id;
-   console.log("userid=",userId);
+   // console.log("userid=",userId);
    const productId = req?.params?.productId;
 
    if (!userId) {
