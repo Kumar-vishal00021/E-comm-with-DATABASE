@@ -3,10 +3,11 @@ import{v4 as uuidv4} from "uuid";
 import User from "../models/user.model.js";
 import { logger } from "../middlewares/custom.logger.js";
 import { winstonLogger } from "../../winston.logger.js";
+import { ObjectId } from "mongodb";
 //adding product 
 function addProduct(req,res){
    const{name,price,description,quantity}=req.body;
-   const id=uuidv4();
+   // const id=uuidv4();
    if(!name || !price || !description || !quantity){
     let missingField=[];
     if(!name)missingField.push("name");
@@ -20,7 +21,7 @@ function addProduct(req,res){
    });
    }
    try{
-     Product.addProduct(id,name,price,description,quantity);
+     Product.addProduct(name,price,description,quantity);
    }
    catch(err){
     return res.status(500).json({
@@ -43,7 +44,7 @@ async function  getAllProduct(req,res){
    winstonLogger.error('rjrjogjewofe');
   try{
     allProducs=await Product.getAllProduct(filters);
-    console.log(allProducs)
+   //  console.log(allProducs)
   }
   catch(err){
      return res.status(500).json({
@@ -59,29 +60,32 @@ async function  getAllProduct(req,res){
 }
 //return one product by specific id
 async function getProductById(req,res){
-   const productId=req.params.productId;
+   // const productId=req.params.productId;
+   const { productId } = req.params;
    if(!productId) return res.status(400).json({
       status:false,
       error:"Id is missing!"
    });
    try{
      const newProduct= await Product.getProductById(productId);
+   //   console.log(newProduct);
      return( res.status(200).json({
       status:true,
       product:newProduct
    }))
    }
-   catch(err){
+   catch(error){
+      console.error('Database error:', error.message || error);
       return res.status(500).json({
          status:false,
-         err,
-         message:"Something went wrong"
+         error,
+         message:"Something went wrong "
       });
    }
 }
 
 async function rateProduct(req, res) {
-   const userId = req?.user?.id;
+   const userId = req?.user.id;
    // console.log("userid=",userId);
    const productId = req?.params?.productId;
 
@@ -89,16 +93,15 @@ async function rateProduct(req, res) {
       return res.status(400).json({
          status: false,
          err: "User not found",
-         message: "User with this id is not found"
+         message: "User id is not found"
       });
    }
-
    const user = await User.getUserById(userId); // Assuming async
    if (!user) {
       return res.status(400).json({
          status: false,
          err: "User not found",
-         message: "User with this id is not found"
+         message: `User with this id ${userId} is not found`
       });
    }
 
@@ -112,7 +115,7 @@ async function rateProduct(req, res) {
    }
 
    try {
-      await Product.addProductRating(productId, userId, rating); // Assuming async
+     const ratingUpdate= await Product.addProductRating(productId, userId, rating); // Assuming async
       return res.status(200).json({
          status: true,
          message: "Rated successfully"

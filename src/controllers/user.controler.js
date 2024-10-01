@@ -7,7 +7,7 @@ const roleEnums = ['customer', 'seller', 'logistics']
 //sign up for new user
 async function  signup(req,res){
     const {name,email,password,role}=req.body;
-    const userId=uuidv4();
+    // const userId=uuidv4();
     if(!name || !email || !password || !role){
         return res.status(400).json({
             status:false,
@@ -19,7 +19,7 @@ async function  signup(req,res){
         return res.status(400).json({status: false, message: 'could not register user', error: 'role is not correct'})
     }
     const hashedPassword=bcrypt.hashSync(password,10);
-    await User.creatUser(name,email,hashedPassword,userId,role);
+    await User.creatUser(name,email,hashedPassword,role);
     return res.status(200).json({
         status:true,
         message:"User signed up successfully"
@@ -53,7 +53,7 @@ async function signin(req,res){
         message:"either Email or Password is wrong"
     })
    }
-   const token=await jwt.sign({id:user.userId,email:user.email,role:user.role},SECRET_KEY);
+   const token=await jwt.sign({id:user._id,email:user.email,role:user.role},SECRET_KEY);
    const cookieOptions = {
      httpOnly: true
    }

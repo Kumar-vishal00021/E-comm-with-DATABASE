@@ -1,10 +1,10 @@
+import { ObjectId } from "mongodb";
 import { Db } from "../routes/Db.js";
 
 const collectionName="Product"
 
 export default class Product{
-    constructor(id,name,price,rating,description,quantity,creatorId,userRatingCount,userRatingMapping){
-       this.id=id;
+    constructor(name,price,rating,description,quantity,creatorId,userRatingCount,userRatingMapping){
        this.name=name;
        this.price=price;
        this.rating=rating;
@@ -28,15 +28,15 @@ export default class Product{
         })
         return filteredProduct;
     }
-    static async addProduct(id,name,price,description,quantity){
+    static async addProduct(name,price,description,quantity){
         const collection= await Db().collection(collectionName);
-       const newProduct=new Product(id,name,price,0,description,quantity,911,0);
+       const newProduct=new Product(name,price,0,description,quantity,911,0);
        await collection.insertOne(newProduct);
     //    products.push(newProduct);
     }
     static async getProductById(id){
         const collection= await Db().collection(collectionName);
-        const filteredProduct=await collection.findOne({id:id});
+        const filteredProduct=await collection.findOne({_id: new ObjectId(id)});
         // const filteredProduct=products.find((entry)=>{
         //     return entry.id == id;
         // })
@@ -45,10 +45,15 @@ export default class Product{
     }
     static async addProductRating(productId,userId,rating){
         const selectedProduct=await Product.getProductById(productId);
+        const collection= await Db().collection(collectionName);
         if(!selectedProduct){
             return "Product with this id is not present";
         }
+        if (!selectedProduct.userRatingMapping) {
+            selectedProduct.userRatingMapping = {};
+        }
         const existingRating=selectedProduct.userRatingMapping[userId];
+        
         if(!existingRating){
             selectedProduct.rating=(selectedProduct.rating*selectedProduct.userRatingCount+rating)/selectedProduct.userRatingCount;
             selectedProduct.userRatingCount++;
@@ -56,14 +61,15 @@ export default class Product{
         else{
             selectedProduct.rating=(selectedProduct.rating*selectedProduct.userRatingCount-existingRating+rating)/selectedProduct.userRatingCount;
         }
-       selectedProduct.userRatingMapping[userId]=rating; 
-       return { success: true };
+       selectedProduct.userRatingMapping[userId]=(rating); 
+       await collection.updateOne(
+        { _id: new ObjectId(productId) },   // Filter by product ID
+        { $set: {                           // Set updated values
+            rating: selectedProduct.rating,
+            userRatingCount: selectedProduct.userRatingCount,
+            userRatingMapping: selectedProduct.userRatingMapping
+        }}
+    );
+       return  selectedProduct ;
     }
 }
-
-// let products=[
-//     new Product("1",'laptop',120000,4.9,"this is the premium laptop for heavy use",1,9117446593,0,{}),
-//     new Product("2", 'mobile',53000,4.9,"this is the premium mobile for heavy use",1,911744659,0,{}),
-//     new Product("3", 'machine',15000,4.9,"this is the premium machine for heavy use",1,91174465,0,{}),
-//     new Product("4", 'dekstop',10000,4.9,"this is the premium dekstop for heavy use",1,9117446,0,{}),
-// ]
