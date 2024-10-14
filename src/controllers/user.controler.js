@@ -5,7 +5,12 @@ import User from "../models/user.model.js"
 const SECRET_KEY="this is secret key";
 const roleEnums = ['customer', 'seller', 'logistics']
 //sign up for new user
-async function  signup(req,res){
+import UserRepository from "../repository/user.repository.js";
+ class UserController {
+   constructor(){
+      this.userRepository = new UserRepository()
+   }
+  signup=async(req,res)=> {
     const {name,email,password,role}=req.body;
     // const userId=uuidv4();
     if(!name || !email || !password || !role){
@@ -19,14 +24,14 @@ async function  signup(req,res){
         return res.status(400).json({status: false, message: 'could not register user', error: 'role is not correct'})
     }
     const hashedPassword=bcrypt.hashSync(password,10);
-    await User.creatUser(name,email,hashedPassword,role);
+    await this.userRepository.creatUser(name,email,hashedPassword,role);
     return res.status(200).json({
         status:true,
         message:"User signed up successfully"
     });
 }
 //sign in to signed up user
-async function signin(req,res){
+ signin=async(req,res)=> {
    const {email,password}=req.body;
    if(!email || !password){
     return res.status(400).json({
@@ -34,7 +39,7 @@ async function signin(req,res){
         error:"Can't signin ",
         message:"either Email or password is missing"});
    }
-   const user = await User.getUserByemail(email);
+   const user = await this.userRepository.getUserByemail(email);
    if(!user){
     return res.status(400).json({
         status:false,
@@ -67,12 +72,13 @@ async function signin(req,res){
    });
 }
 //return all user who signed up
-async function  getAllUsers(req,res){
-    const user=await User.getAllUser();
+   getAllUsers = async(req,res) => {
+    const user=await this.userRepository.getAllUser();
     return res.status(200).json({
         "success":true,
         users:user
     });
 }
 
-export{signup,signin,getAllUsers};
+}
+export default UserController;
