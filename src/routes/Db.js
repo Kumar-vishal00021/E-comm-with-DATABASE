@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 const dbName = 'e-comm-using-rest-api';
-const url = 'mongodb+srv://Kumar-vishal00021:Vishal@1234@e-commerce.h5vsy.mongodb.net/?ssl=true&tls=true';
+const url = 'mongodb+srv://Kumar-vishal00021:Vishal@1234@e-commerce.h5vsy.mongodb.net/';
 
 let client;
 export default async function connectionToDb(){
@@ -18,6 +18,6 @@ export default async function connectionToDb(){
         process.exit(1);
     }
 }
-export  function Db(){
+export   function Db(){
     return client.db(dbName);
 }
