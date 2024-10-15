@@ -12,6 +12,6 @@ export default async function connectionToDb(){
         process.exit(1);
     }
 }
-export   function Db(){
-    return client.db(dbName);
+export  async function Db(){
+    return await client.db(dbName);
 }
