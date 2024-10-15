@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 const dbName = 'e-comm-using-rest-api';
-const url = 'mongodb+srv://Kumar-vishal00021:Vishal%401234@e-commerce.h5vsy.mongodb.net/';
+const url = 'mongodb+srv://Kumar-vishal00021:Vishal%401234@e-commerce.h5vsy.mongodb.net/?retryWrites=true&w=majority&appName=E-Commerce';
 
 let client;
 export default async function connectionToDb(){
