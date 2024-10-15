@@ -4,7 +4,12 @@ const url = 'mongodb+srv://Kumar-vishal00021:Vishal%401234@e-commerce.h5vsy.mong
 
 let client;
 export default function connectionToDb(){
-    MongoClient.connect(url)
+    MongoClient.connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        ssl: true,  
+        tlsAllowInvalidCertificates: true 
+    })
     .then((currentClient)=>{
         client=currentClient;
         console.log("Db connected successfully");
