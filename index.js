@@ -9,7 +9,7 @@ const PORT=3000;
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
-app.get("/working",()=>{
+app.get("/working",(req,res)=>{
    return res.end("working.......");
 })
 app.use("/",baseRoutes);
