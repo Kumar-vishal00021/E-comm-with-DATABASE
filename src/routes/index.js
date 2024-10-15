@@ -29,7 +29,6 @@ router.route("/user/signin")
 router.route("/user")
   .get(userController.getAllUsers);
 
-
 router.route('/order/:productId')
   .post(customerCheck, placeOrder)
 
