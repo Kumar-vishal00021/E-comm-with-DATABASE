@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 const dbName = 'e-comm-using-rest-api';
-const url = 'mongodb://localhost:27017';
+const url = 'mongodb+srv://Kumar-vishal00021:Vishal%401234@e-commerce.h5vsy.mongodb.net/';
 
 let client;
 export default function connectionToDb(){
