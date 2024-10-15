@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({extended:true}));
 app.get("/working",()=>{
-   return res.sent("working.......");
+   return res.end("working.......");
 })
 app.use("/",baseRoutes);
 app.listen(PORT,()=>{
