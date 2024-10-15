@@ -13,7 +13,7 @@ app.get("/working",(req,res)=>{
    return res.end("working.......");
 })
 app.use("/",baseRoutes);
-app.listen(PORT,()=>{
+app.listen(PORT, ()=>{
     console.log(`server is listing at http://localhost:${PORT}/`);
     connectionToDb();
 })
